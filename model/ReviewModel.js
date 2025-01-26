@@ -24,5 +24,5 @@ const Reviews = sequelize.define("Reviews", {
 
 });
 
-module.exports = Products;
+module.exports = Reviews;
 

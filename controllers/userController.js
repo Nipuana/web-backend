@@ -103,7 +103,7 @@ const newtest = await User.create({username,email, password})
 res.status(200).json(newtest);
     }
     catch(error){
-        res.status(500).json({error: "Failed to Load"})
+        res.status(500).json({error: "Failed to Load Users"})
         console.log(error)
     }
 

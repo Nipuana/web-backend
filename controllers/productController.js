@@ -9,7 +9,7 @@ const getProduct = async(req, res)=>{
 
     }
     catch(error){
-        res.status(500).json({error: "Failed to Load"})
+        res.status(500).json({error: "Failed to Load Products"})
     }
 }
 
@@ -46,11 +46,11 @@ const updateProduct = async(req, res)=>{
 
 const deleteProduct = async(req, res)=>{
     try {
-        const Product = await Product.findByPk(req.params.id);
-        if (!Product) {
+        const product = await Product.findByPk(req.params.id);
+        if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        await Product.destroy();
+        await product.destroy();
         res.json({ message: 'Product deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
