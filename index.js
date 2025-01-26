@@ -2,14 +2,14 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const sequelize = require('./database/db');
+const sequelize = require('./database/FarmHelp_database');
 const userRoute = require('./routes/userRoute')
 
 //Creating a Server
 const app = express();
 
 //Creating a port
-const PORT = process.env.PORT || 5000
+const PORT = 5000;
 
 //Creating a middleware
 app.use(cors());
