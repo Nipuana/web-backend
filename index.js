@@ -6,6 +6,7 @@ const sequelize = require('./database/FarmHelp_database');
 const userRoute = require('./routes/userRoute')
 const productRoute = require('./routes/productRoute')
 const orderRoute = require('./routes/orderRoute')
+const reviewRoute = require('./routes/reviewRoute')
 
 //Creating a Server
 const app = express();
@@ -27,6 +28,7 @@ app.get('/login',(req, res)=>{
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/orders',orderRoute)
+app.use('/reviews',reviewRoute)
 
 
 //Running on PORT
