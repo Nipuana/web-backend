@@ -1,8 +1,7 @@
 const User = require('../model/UserModel')
 const jwt= require('jsonwebtoken')
 const bcrypt= require ('bcrypt');
-const { response } = require('express');
-const e = require('cors');
+
 
 
 const registerUser=async(req,res)=>{
@@ -96,10 +95,10 @@ const createUser = async(req, res)=>{
     
     try{
         
-const {username, password} = req.body;
+const {username,email, password} = req.body;
 
 //Hash the password
-const newtest = await User.create({username, password})
+const newtest = await User.create({username,email, password})
 
 res.status(200).json(newtest);
     }
