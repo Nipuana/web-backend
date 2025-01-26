@@ -33,12 +33,12 @@ res.status(200).json(newtest);
 
 const updateProduct = async(req, res)=>{
     try {
-        const Product = await Product.findByPk(req.params.id);
-        if (!Product) {
+        const product = await Product.findByPk(req.params.id);
+        if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        await Product.update(req.body);
-        res.json(Product);
+        await product.update(req.body);
+        res.json(product);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
