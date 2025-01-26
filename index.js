@@ -7,6 +7,7 @@ const userRoute = require('./routes/userRoute')
 const productRoute = require('./routes/productRoute')
 const orderRoute = require('./routes/orderRoute')
 const reviewRoute = require('./routes/reviewRoute')
+const categoryRoute = require('./routes/categoryRoute')
 
 //Creating a Server
 const app = express();
@@ -29,6 +30,7 @@ app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/orders',orderRoute)
 app.use('/reviews',reviewRoute)
+app.use('/categories',categoryRoute)
 
 
 //Running on PORT
