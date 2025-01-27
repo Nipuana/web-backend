@@ -23,7 +23,7 @@ const Orders = sequelize.define("Orders", {
     type: STRING
   },
   status: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
     
   },
 
