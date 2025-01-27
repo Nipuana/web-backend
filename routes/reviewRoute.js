@@ -6,10 +6,10 @@ const router = express.Router();
 const reviewController = require('../controllers/reviewController')
 
 
-router.get('/view_products',reviewController.getReview)
-router.post('/create_products',reviewController.createReview)
+router.get('/view_review',reviewController.getReview)
+router.post('/create_review',reviewController.createReview)
 
-router.put('/update_products',reviewController.updateReview)
-router.delete('delete_products',reviewController.deleteReview)
+router.put('/update_review',reviewController.updateReview)
+router.delete('delete_review',reviewController.deleteReview)
 
 module.exports = router;
