@@ -1,5 +1,6 @@
 
 const express = require('express')
+const upload= require('../middleware/imageUpload')
 
 const router = express.Router();
 
