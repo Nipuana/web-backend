@@ -39,7 +39,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
-    console.log("📥 Incoming Login Request:", { email });
+    console.log(" Incoming Login Request:", { email });
 
     if (!email || !password) {
         console.log("  Validation Error: Missing email or password.");
