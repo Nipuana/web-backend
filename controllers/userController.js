@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const registerUser = async (req, res) => {
     const { username, email, password, isAdmin } = req.body;
-    console.log("Incoming Registration Request:", { username, email, isAdmin });
+    console.log("📥 Incoming Registration Request:", { username, email, isAdmin });
 
     if (!username || !email || !password) {
         return res.status(400).json({ error: "All fields are required" });
@@ -25,22 +25,27 @@ const registerUser = async (req, res) => {
             isAdmin: isAdmin || false // Default to false if not specified
         });
 
+        //    Ensure isAdmin is included in JWT token
         const token = jwt.sign({ 
             id: newUser.id, 
             username: newUser.username, 
             isAdmin: newUser.isAdmin 
         }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-        res.status(201).json({ message: "Registration Successful", token });
+        res.status(201).json({ 
+            message: "Registration Successful", 
+            token,
+            isAdmin: newUser.isAdmin, //    Send isAdmin status in response
+            username: newUser.username //    Ensure username is sent
+        });
     } catch (error) {
-        console.error("   Registration Error:", error);
+        console.error("  Registration Error:", error);
         res.status(500).json({ error: "Something went wrong." });
     }
 };
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
-    console.log("Incoming Login Request:", { email });
 
     if (!email || !password) {
         return res.status(400).json({ error: "Email and password are required" });
@@ -57,15 +62,21 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ error: "Incorrect password" });
         }
 
+        //    Ensure isAdmin is included in JWT token
         const token = jwt.sign({
             id: user.id,
             username: user.username,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin 
         }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-        res.status(200).json({ message: "Login Successful", token, isAdmin: user.isAdmin });
+        res.status(200).json({
+            message: "Login Successful",
+            token,
+            isAdmin: user.isAdmin, //    Send isAdmin in response
+            username: user.username //    Ensure username is sent
+        });
     } catch (error) {
-        console.error("   Login Error:", error);
+        console.error("  Login Error:", error);
         res.status(500).json({ error: "Something went wrong." });
     }
 };
@@ -75,7 +86,7 @@ const getUser = async (req, res) => {
         const users = await User.findAll();
         res.status(200).json(users);
     } catch (error) {
-        console.error("   Get Users Error:", error);
+        console.error("  Get Users Error:", error);
         res.status(500).json({ error: "Failed to Load Users" });
     }
 };
@@ -84,13 +95,13 @@ const updateUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
         if (!user) {
-            console.log("   Update Error: User not found.");
+            console.log("  Update Error: User not found.");
             return res.status(404).json({ message: "User not found" });
         }
         await user.update(req.body);
         res.json({ message: "User updated successfully", user });
     } catch (err) {
-        console.error("   Update User Error:", err);
+        console.error("  Update User Error:", err);
         res.status(400).json({ error: err.message });
     }
 };
@@ -99,13 +110,13 @@ const deleteUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
         if (!user) {
-            console.log("   Delete Error: User not found.");
+            console.log("  Delete Error: User not found.");
             return res.status(404).json({ message: "User not found" });
         }
         await user.destroy();
         res.json({ message: "User deleted successfully" });
     } catch (err) {
-        console.error("   Delete User Error:", err);
+        console.error("  Delete User Error:", err);
         res.status(500).json({ error: err.message });
     }
 };
