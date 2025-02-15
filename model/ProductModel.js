@@ -1,35 +1,47 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/FarmHelp_database");
+const Category = require("./CategoryModel"); // Import Category Model
 
-const Products = sequelize.define("Products", {
-   id: {
+const Product = sequelize.define("Product", {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
-   },
-   productname: {
+        autoIncrement: true
+    },
+    productName: {
         type: DataTypes.STRING,
-        allowNull: false,
-   },
-   description: {
+        allowNull: false
+    },
+    description: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-  },
-  price: {
+        validate: { min: 0 } // Prevent negative prices
+    },
+    quantity: {
         type: DataTypes.INTEGER,
-    
-  },
-  quantity: {
+        allowNull: false,
+        validate: { min: 0 } // Prevent negative stock
+    },
+    productImage: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    categoryId: {
         type: DataTypes.INTEGER,
-    
-  },
-  productImage:{
-      type:DataTypes.STRING,
-      allowNull: true,
-  },
-
-
+        allowNull: false,
+        references: {
+            model: Category,
+            key: "id"
+        },
+        onDelete: "CASCADE"
+    },
 });
 
-module.exports = Products;
+// Define Association with Category
+Product.belongsTo(Category, { foreignKey: "categoryId" });
 
+module.exports = Product;

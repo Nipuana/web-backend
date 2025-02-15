@@ -1,13 +1,12 @@
 const express = require("express");
-
 const router = express.Router();
+const productController = require("../controllers/productController");
+const upload = require("../middleware/imageUpload"); // Multer Middleware
 
-const orderController = require("../controllers/orderController");
-
-router.get("/view_orders", orderController.getOrders);
-router.get("/view_orders/:id", orderController.getOrderById);
-router.post("/create_orders", orderController.createOrder);
-router.put("/update_orders/:id", orderController.updateOrder);
-router.delete("/delete_orders/:id", orderController.deleteOrder);
+router.post("/create_products", upload.single("productImage"), productController.createProduct);
+router.get("/view_products", productController.getAllProducts);
+router.get("/view_products/:id", productController.getProductById);
+router.put("/update_products/:id", upload.single("productImage"), productController.updateProduct);
+router.delete("/delete_products/:id", productController.deleteProduct);
 
 module.exports = router;

@@ -1,112 +1,116 @@
-const { error } = require('console');
-const Product = require('../model/ProductModel')
-const fs= require('fs');
-const path =require('path');
-
-
+const Product = require("../models/ProductModel");
+const fs = require("fs");
+const path = require("path");
 
 // Create new Product
-const createProduct = async(req, res)=>{
-    
-    try{
-        
-const {productname, description, price, quantity} = req.body;
-const productImage=req.file ? req.file.filename:null;
+async function createProduct(req, res) {
+    try {
+        const { productName, description, price, quantity, categoryId } = req.body;
+        const productImage = req.file ? req.file.filename : null;
 
-const newtest = await Product.create({productname, description,price,quantity,productImage})
+        if (!productName || !description || !price || !quantity || !categoryId) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
 
-res.status(200).json(newtest);
+        const newProduct = await Product.create({ productName, description, price, quantity, categoryId, productImage });
+
+        res.status(201).json({ message: "Product created successfully", newProduct });
+    } catch (error) {
+        console.error("Error creating product:", error);
+        res.status(500).json({ error: "Failed to create product" });
     }
-    catch(error){
-        res.status(500).json({error: "Failed to Load"})
-        console.log(error)
-    }
-
 }
-
 
 // Get all Products
-const getAllProducts = async(req, res)=>{
-
-    try{
-        const tests = await Product.findAll();
-        res.status(200).json(tests);
-
-    }
-    catch(error){
-        res.status(500).json({error: "Failed to Load Products"})
+async function getAllProducts(req, res) {
+    try {
+        const products = await Product.findAll();
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        res.status(500).json({ error: "Failed to load products" });
     }
 }
-
-
 
 // Get Product by ID
-const getProductById= async(req,res)=>{
-    try{
-   const{id}=req.params;
-   const product =await Product.findByPk(id);
-
-        if(!product){
-            return res.status(404).json({error: "Product not found"})
-        }
-        res.status(200).json(product);
-    }catch(error){
-        res.status(500).json({error: error.message});
-    }
-};
-
-
-// Update a product
-const updateProduct = async(req, res)=>{
+async function getProductById(req, res) {
     try {
-        const {id}=req.params
-        const {productname,description,price,quantity}=req.body;
-        const product = await Product.findByPk(req.params.id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        // Handle the new image file if uploaded
-        const productImage=req.file? req.filename:product.productImage;
-
-        // Delete old image if a new one is updated
-        if(req.file && product.productImage){
-            const oldImagePath = path.join(__dirname,'../uploads/',productImage);
-            fs.unlinkSync(oldImagePath) 
-        }
-
-        await product.update({
-            productname,
-            description,
-            price,
-            quantity,
-            productImage,
-        });
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const deleteProduct = async(req, res)=>{
-    try {
-        const {id}=req.params;
+        const { id } = req.params;
         const product = await Product.findByPk(id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        // Delete the image file
-            if(product.productImage){
-                const imagePath=path.join(__dirname,'../uploads/',product.productImage);
-                fs.unlinkSync(imagePath);
-            }
 
-        await product.destroy();
-        res.status(200).json({ message: 'Product deleted' });
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        res.status(200).json(product);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error fetching product:", error);
+        res.status(500).json({ error: "Failed to load product" });
     }
 }
 
+// Update a product
+async function updateProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const { productName, description, price, quantity, categoryId } = req.body;
+        const product = await Product.findByPk(id);
 
-module.exports = {createProduct, getAllProducts, getProductById, deleteProduct, updateProduct}
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
 
+        let productImage = product.productImage;
+        if (req.file) {
+            productImage = req.file.filename;
+
+            // Delete old image if it exists
+            if (product.productImage) {
+                const oldImagePath = path.join(__dirname, "../uploads", product.productImage);
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+        }
+
+        await product.update({ productName, description, price, quantity, categoryId, productImage });
+
+        res.status(200).json({ message: "Product updated successfully", product });
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({ error: "Failed to update product" });
+    }
+}
+
+// Delete a product
+async function deleteProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByPk(id);
+
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        // Delete the image file
+        if (product.productImage) {
+            const imagePath = path.join(__dirname, "../uploads", product.productImage);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
+        await product.destroy();
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        res.status(500).json({ error: "Failed to delete product" });
+    }
+}
+
+module.exports = {
+    createProduct,
+    getAllProducts,
+    getProductById,
+    updateProduct,
+    deleteProduct
+};
