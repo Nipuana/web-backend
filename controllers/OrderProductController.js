@@ -1,4 +1,4 @@
-const OrderProduct = require("../models/OrderProduct");
+const OrderProduct = require("../model/OrderProductModel");
 
 // Add product to order
 async function addProductToOrder(req, res) {

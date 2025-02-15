@@ -1,5 +1,5 @@
-const Order = require("../models/OrderModel");
-const User = require("../models/UserModel"); // Ensure association is defined
+const Order = require("../model/OrderModel");
+const User = require("../model/UserModel"); // Ensure association is defined
 
 // Get all orders (Including user details)
 async function getOrders(req, res) {

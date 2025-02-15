@@ -1,5 +1,5 @@
-const Review = require("../models/ReviewModel");
-const Product = require("../models/ProductModel");
+const Review = require("../model/ReviewModel");
+const Product = require("../model/ProductModel");
 
 // Get all reviews
 async function getReviews(req, res) {
