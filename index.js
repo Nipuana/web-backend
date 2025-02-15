@@ -9,6 +9,7 @@ const productRoute = require('./routes/productRoute');
 const orderRoute = require('./routes/orderRoute');
 const reviewRoute = require('./routes/reviewRoute');
 const categoryRoute = require('./routes/categoryRoute');
+const orderProductRoutes = require("./routes/orderProductRoutes");
 
 // Creating a Server
 const app = express();
@@ -31,6 +32,7 @@ app.use('/products', productRoute);
 app.use('/orders', orderRoute);
 app.use('/reviews', reviewRoute);
 app.use('/categories', categoryRoute);
+app.use("/order-products", orderProductRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {
