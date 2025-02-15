@@ -1,62 +1,96 @@
-const Review = require('../model/ReviewModel');
+const Review = require("../models/ReviewModel");
+const Product = require("../models/ProductModel");
 
-
-const getReview = async(req, res)=>{
-
-    try{
-        const tests = await Review.findAll();
-        res.status(200).json(tests);
-
-    }
-    catch(error){
-        res.status(500).json({error: "Failed to Load"})
-    }
-}
-
-const createReview = async(req, res)=>{
-    
-    try{
-        
-const {Rating, Comment, ReviewDate} = req.body;
-
-
-const newtest = await Review.create({Rating, Comment, ReviewDate})
-
-res.status(200).json(newtest);
-    }
-    catch(error){
-        res.status(500).json({error: "Failed to Load Reviews"})
-        console.log(error)
-    }
-
-}
-
-const updateReview = async(req, res)=>{
+// Get all reviews
+async function getReviews(req, res) {
     try {
-        const review = await Review.findByPk(req.params.id);
-        if (!review) {
-            return res.status(404).json({ message: 'Review not found' });
-        }
-        await review.update(req.body);
-        res.json(review);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+        const reviews = await Review.findAll({
+            include: [{ model: Product, attributes: ["id", "productName"] }], // Include product details
+        });
+        res.status(200).json(reviews);
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ error: "Failed to load reviews" });
     }
 }
 
-const deleteReview = async(req, res)=>{
+// Get a single review by ID
+async function getReviewById(req, res) {
     try {
-        const review = await Review.findByPk(req.params.id);
+        const { id } = req.params;
+        const review = await Review.findByPk(id, {
+            include: [{ model: Product, attributes: ["id", "productName"] }],
+        });
+
         if (!review) {
-            return res.status(404).json({ message: 'Review not found' });
+            return res.status(404).json({ error: "Review not found" });
         }
+        res.status(200).json(review);
+    } catch (error) {
+        console.error("Error fetching review:", error);
+        res.status(500).json({ error: "Failed to load review" });
+    }
+}
+
+// Create a new review
+async function createReview(req, res) {
+    try {
+        const { Rating, Comment, productId } = req.body;
+
+        if (!productId) {
+            return res.status(400).json({ error: "Product ID is required" });
+        }
+
+        const newReview = await Review.create({ Rating, Comment, productId });
+
+        res.status(201).json({ message: "Review created successfully", newReview });
+    } catch (error) {
+        console.error("Error creating review:", error);
+        res.status(500).json({ error: "Failed to create review" });
+    }
+}
+
+// Update a review
+async function updateReview(req, res) {
+    try {
+        const { id } = req.params;
+        const { Rating, Comment, productId } = req.body;
+        const review = await Review.findByPk(id);
+
+        if (!review) {
+            return res.status(404).json({ error: "Review not found" });
+        }
+
+        await review.update({ Rating, Comment, productId });
+        res.status(200).json({ message: "Review updated successfully", review });
+    } catch (error) {
+        console.error("Error updating review:", error);
+        res.status(500).json({ error: "Failed to update review" });
+    }
+}
+
+// Delete a review
+async function deleteReview(req, res) {
+    try {
+        const { id } = req.params;
+        const review = await Review.findByPk(id);
+
+        if (!review) {
+            return res.status(404).json({ error: "Review not found" });
+        }
+
         await review.destroy();
-        res.json({ message: 'Review deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(200).json({ message: "Review deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting review:", error);
+        res.status(500).json({ error: "Failed to delete review" });
     }
 }
 
-
-module.exports = {createReview, getReview, deleteReview, updateReview}
-
+module.exports = {
+    getReviews,
+    getReviewById,
+    createReview,
+    updateReview,
+    deleteReview,
+};
