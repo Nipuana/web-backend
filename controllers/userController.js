@@ -30,13 +30,13 @@ const registerUser = async (req, res) => {
             id: newUser.id, 
             username: newUser.username, 
             isAdmin: newUser.isAdmin 
-        }, process.env.JWT_SECRET, { expiresIn: "24h" });
+        }, process.env.JWT_SECRET, { expiresIn: "720h" });
 
         res.status(201).json({ 
             message: "Registration Successful", 
             token,
-            isAdmin: newUser.isAdmin, //    Send isAdmin status in response
-            username: newUser.username //    Ensure username is sent
+            isAdmin: newUser.isAdmin,
+            username: newUser.username 
         });
     } catch (error) {
         console.error("  Registration Error:", error);
@@ -72,8 +72,8 @@ const loginUser = async (req, res) => {
         res.status(200).json({
             message: "Login Successful",
             token,
-            isAdmin: user.isAdmin, //    Send isAdmin in response
-            username: user.username //    Ensure username is sent
+            isAdmin: user.isAdmin, 
+            username: user.username 
         });
     } catch (error) {
         console.error("  Login Error:", error);

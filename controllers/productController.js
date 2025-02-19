@@ -48,7 +48,7 @@ async function getProductById(req, res) {
     }
 }
 
-// Update a product
+// Update a product (with image update handling)
 async function updateProduct(req, res) {
     try {
         const { id } = req.params;
@@ -60,6 +60,8 @@ async function updateProduct(req, res) {
         }
 
         let productImage = product.productImage;
+
+        // If a new image is uploaded, replace the old image
         if (req.file) {
             productImage = req.file.filename;
 
@@ -81,7 +83,7 @@ async function updateProduct(req, res) {
     }
 }
 
-// Delete a product
+// Delete a product (with image removal)
 async function deleteProduct(req, res) {
     try {
         const { id } = req.params;
@@ -91,7 +93,7 @@ async function deleteProduct(req, res) {
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // Delete the image file
+        // Delete the associated image file
         if (product.productImage) {
             const imagePath = path.join(__dirname, "../uploads", product.productImage);
             if (fs.existsSync(imagePath)) {
