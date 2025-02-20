@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");  // Import path for file handling
-const sequelize = require("./database/FarmHelp_database");
+// const sequelize = require("./database/FarmHelp_database");
 
 const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
@@ -36,5 +36,5 @@ app.use((req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`Server Running on PORT ${PORT}`);
+    console.log(`Server Running on  ...................... PORT ${PORT}`);
 });

@@ -22,21 +22,24 @@ const registerUser = async (req, res) => {
             username, 
             email, 
             password: hashPassword, 
-            isAdmin: isAdmin || false // Default to false if not specified
+            isAdmin: isAdmin || false 
         });
 
-        //    Ensure isAdmin is included in JWT token
+       
         const token = jwt.sign({ 
-            id: newUser.id, 
+            userId: newUser.id,  
             username: newUser.username, 
             isAdmin: newUser.isAdmin 
-        }, process.env.JWT_SECRET, { expiresIn: "720h" });
+        }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+        console.log("✅ Registration Successful:", { userId: newUser.id, username: newUser.username });
 
         res.status(201).json({ 
             message: "Registration Successful", 
             token,
-            isAdmin: newUser.isAdmin,
-            username: newUser.username 
+            userId: newUser.id,
+            username: newUser.username, 
+            isAdmin: newUser.isAdmin
         });
     } catch (error) {
         console.error("  Registration Error:", error);
@@ -62,18 +65,21 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ error: "Incorrect password" });
         }
 
-        //    Ensure isAdmin is included in JWT token
+        
         const token = jwt.sign({
-            id: user.id,
+            userId: user.id, 
             username: user.username,
             isAdmin: user.isAdmin 
         }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
+        console.log("✅ Login Successful:", { userId: user.id, username: user.username });
+
         res.status(200).json({
             message: "Login Successful",
             token,
-            isAdmin: user.isAdmin, 
-            username: user.username 
+            userId: user.id, 
+            username: user.username, 
+            isAdmin: user.isAdmin
         });
     } catch (error) {
         console.error("  Login Error:", error);
