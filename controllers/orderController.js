@@ -1,5 +1,7 @@
 const Order = require("../model/OrderModel");
 const User = require("../model/UserModel"); // Ensure association is defined
+const OrderProduct=require("../model/OrderProductModel")
+const Product = require("../model/ProductModel")
 
 // Get all orders (Including user details)
 async function getOrders(req, res) {
@@ -32,23 +34,27 @@ async function getOrderById(req, res) {
 // Create a new order
 async function createOrder(req, res) {
     try {
-        const { orderQuantity, price, order_Date, address, status, userId } = req.body;
+        const { userId, totalAmount, orderItems } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ error: "User ID is required" });
+        if (!userId || !orderItems || orderItems.length === 0) {
+            return res.status(400).json({ error: "Invalid order data" });
         }
 
-        // Check if the user exists
-        const userExists = await User.findByPk(userId);
-        if (!userExists) {
-            return res.status(400).json({ error: "Invalid User ID" });
-        }
+        //  Step 1: Create the Order
+        const newOrder = await Order.create({ userId, totalAmount });
 
-        const newOrder = await Order.create({ orderQuantity, price, order_Date, address, status, userId });
+        //  Step 2: Insert Products into `OrderProduct`
+        const orderProductsData = orderItems.map((item) => ({
+            orderId: newOrder.id, // Link order ID
+            productId: item.productId,
+            quantity: item.quantity,
+        }));
+
+        await OrderProduct.bulkCreate(orderProductsData); //  Insert all at once
 
         res.status(201).json({ message: "Order created successfully", newOrder });
     } catch (error) {
-        console.error("Error creating order:", error);
+        console.error(" Error creating order:", error);
         res.status(500).json({ error: "Failed to create order" });
     }
 }
